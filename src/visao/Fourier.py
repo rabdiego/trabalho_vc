@@ -10,7 +10,7 @@ class FourierTransform(BaseProcessor):
 
 class FrequencyGraph(BaseProcessor):
     def __call__(self, x):
-        return 20 * np.log(np.abs(x) + 1)
+        return np.abs(x)
 
 
 class FrequencyRatio(BaseProcessor):
