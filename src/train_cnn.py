@@ -132,20 +132,22 @@ def objective(trial):
     acc, _, _, _ = evaluate_model(model, test_loader)
     return acc
 
-study = optuna.create_study(direction="maximize")
-study.optimize(objective, n_trials=20)
+#study = optuna.create_study(direction="maximize")
+#study.optimize(objective, n_trials=20)
 
-best = study.best_params
-model = FlexibleCNN(conv_layers=best["conv_layers"], dense_layers=best["dense_layers"],
-                    n_filters=best["n_filters"], hidden_dim=best["hidden_dim"],
-                    dropout_rate=best["dropout"]).to(device)
-optimizer = optim.Adam(model.parameters(), lr=best["lr"])
+#best = study.best_params
+model = FlexibleCNN(conv_layers=2, dense_layers=2,
+                    n_filters=16, hidden_dim=64,
+                    dropout_rate=0.47390094714103576).to(device)
+optimizer = optim.Adam(model.parameters(), lr=0.000509873782982352)
 criterion = nn.BCELoss()
-train_loader = DataLoader(train_dataset, batch_size=best["batch_size"], shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=best["batch_size"])
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32)
 
 for epoch in range(50):
     train_model(model, train_loader, optimizer, criterion)
+    acc, _, _, _ = evaluate_model(model, test_loader)
+    print(f'epoca {epoch} acc {acc}')
 
 torch.save(model.state_dict(), "cnn.pt")
 acc, prec, rec, f1 = evaluate_model(model, test_loader)
